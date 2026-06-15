@@ -1,0 +1,35 @@
+{
+  "name": "first-page-backend",
+  "version": "1.0.0",
+  "description": "backend",
+  "main": "App.js",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Diegoo11/first-page-backend.git"
+  },
+  "author": "Diegoo11",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Diegoo11/first-page-backend/issues"
+  },
+  "homepage": "https://github.com/Diegoo11/first-page-backend#readme",
+  "dependencies": {
+    "@apollo/server": "4.7.4",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "graphql": "16.6.0",
+    "install": "^0.13.0",
+    "jsonwebtoken": "9.0.0",
+    "mongoose": "7.3.1",
+    "npm": "^9.7.2"
+  },
+  "devDependencies": {
+    "eslint": "8.42.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-plugin-import": "2.27.5"
+  }
+}
