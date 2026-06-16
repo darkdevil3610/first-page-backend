@@ -3,16 +3,35 @@
 import 'dotenv/config';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-// import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { GraphQLError } from 'graphql';
 import typeDefs from './typeDefs/typeDefs.js';
 import resolvers from './resolvers/resolvers.js';
-import './db/db.js';
+import { dbReady } from './db/db.js';
 import User from './models/User.js';
 import Admin from './models/Admin.js';
+import ensureAdminSeed from './utils/seedAdmin.js';
 
-// dotenv.config();
+const verifyToken = (token) => {
+  try {
+    const { JWT_SECRET } = process.env;
+
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET is not configured');
+    }
+
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    throw new GraphQLError('Not Authenticated', {
+      extensions: {
+        code: 'AUTHENTICATION_ERROR',
+      },
+    });
+  }
+};
+
+await dbReady;
+await ensureAdminSeed();
 
 const server = new ApolloServer({
   typeDefs,
@@ -29,8 +48,7 @@ const { url } = await startStandaloneServer(server, {
     if (auth && auth.toLocaleLowerCase().startsWith('bearer')) {
       const tk = auth.substring(7);
 
-      const { JWT_SECRET } = process.env;
-      const decodedToken = jwt.decode(tk, JWT_SECRET);
+      const decodedToken = verifyToken(tk);
 
       if (!decodedToken) {
         throw new GraphQLError('Not Authenticated', {
@@ -47,8 +65,7 @@ const { url } = await startStandaloneServer(server, {
     if (auth && auth.toLocaleLowerCase().startsWith('admin')) {
       const tk = auth.substring(6);
 
-      const { JWT_SECRET } = process.env;
-      const decodedToken = jwt.decode(tk, JWT_SECRET);
+      const decodedToken = verifyToken(tk);
 
       if (!decodedToken) {
         throw new GraphQLError('Not Authenticated', {
